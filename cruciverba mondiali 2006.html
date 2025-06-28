@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cruciverba Mondiali 2006</title>
+  <style>
+    body {
+      background: url('stadio3.png') no-repeat center center fixed;
+      background-size: cover;
+      font-family: Arial, sans-serif;
+      color: #fff;
+      margin: 0; padding: 20px;
+    }
+    .container {
+      max-width: 1100px;
+      background: rgba(0,0,0,0.85);
+      margin: auto;
+      border-radius: 10px;
+      padding: 25px;
+    }
+    h1 {
+      text-align: center;
+      color: #007FFF;
+      margin-bottom: 15px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(17, 32px);
+      grid-template-rows: repeat(17, 32px);
+      gap: 2px;
+      justify-content: center;
+      margin: 20px 0;
+      user-select: none;
+    }
+    .cell {
+      position: relative;
+      width: 32px;
+      height: 32px;
+      background: white;
+      border: 1px solid #999;
+      box-sizing: border-box;
+    }
+    .cell.black {
+      background: black;
+      border: none;
+    }
+    .cell input {
+      width: 100%;
+      height: 100%;
+      border: none;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+      background: transparent;
+      color: black;
+      caret-color: black;
+      padding: 0;
+      margin: 0;
+    }
+    .cell input:focus {
+      outline: 2px solid #00ccff;
+      background: #e0f7ff;
+    }
+    .number {
+      position: absolute;
+      top: 1px;
+      left: 2px;
+      font-size: 10px;
+      font-weight: bold;
+      color: black;
+      user-select: none;
+    }
+    .clues {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: nowrap;
+      margin-top: 25px;
+      gap: 20px;
+    }
+    .clues > div {
+      flex: 1;
+      background: #222;
+      padding: 15px;
+      border-radius: 8px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .clues h2 {
+      color: #007FFF;
+      margin-top: 0;
+    }
+    ol {
+     list-style: none;
+      padding-left: 0;
+      margin-left: 0;
+     }
+
+    ol li {
+      margin-bottom: 8px;
+      line-height: 1.3;
+      list-style: none; /* Rimuove numerazione */
+      cursor: default;
+    }
+    .button-bar {
+      text-align: center;
+      margin-top: 25px;
+    }
+    button {
+      cursor: pointer;
+      background: #00ccff;
+      border: none;
+      color: black;
+      font-weight: bold;
+      padding: 10px 20px;
+      margin: 0 12px;
+      border-radius: 6px;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #0099cc;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Cruciverba Mondiali 2006</h1>
+    <div class="grid" id="grid"></div>
+
+<div class="clues">
+  <div>
+    <h2>Orizzontali</h2>
+    <ol>
+      <li><b>1.</b> Terzino decisivo in semifinale e finale</li>
+      <li><b>3.</b> Commissario tecnico dell’Italia campione</li>
+      <li><b>5.</b> Città dove si è giocata la finale</li>
+      <li><b>7.</b> Marca del pallone ufficiale, Teamgeist</li>
+      <li><b>9.</b> Fece gol in finale e fu colpito da Zidane</li>
+      <li><b>11.</b> Finalista sconfitta ai rigori</li>
+      <li><b>13.</b> Centrocampista, assistman e MVP della finale</li>
+      <li><b>15.</b> Dieci azzurro, rigorista e leader tecnico</li>
+      <li><b>17.</b> Difensore italiano infortunato durante il torneo</li>
+      <li><b>19.</b> Capocannoniere del torneo con 5 gol</li>
+    </ol>
+  </div>
+  <div>
+    <h2>Verticali</h2>
+    <ol>
+      <li><b>2.</b> Capitano dell’Italia, soprannominato “Muro di Berlino”</li>
+      <li><b>4.</b> Sport al centro della competizione</li>
+      <li><b>6.</b> Espulso in finale per una testata</li>
+      <li><b>8.</b> Paese ospitante dell’edizione 2006</li>
+      <li><b>10.</b> Miglior giovane del torneo</li>
+      <li><b>12.</b> Segnò in semifinale e durante i rigori</li>
+      <li><b>14.</b> Portiere azzurro, protagonista assoluto</li>
+      <li><b>16.</b> Nazionale vincitrice del torneo</li>
+      <li><b>18.</b> Decisivi nella finale tra Italia e Francia</li>
+      <li><b>20.</b> Portiere della Francia in finale</li>
+    </ol>
+  </div>
+</div>
+
+
+    <div class="button-bar">
+      <button onclick="checkAnswers()">Verifica Risposte</button>
+      <button onclick="revealAnswers()">Mostra Soluzioni</button>
+      <button onclick="resetGrid()">Azzera</button>
+    </div>
+  </div>
+
+<script>
+  const size = 17;
+  const words = {
+    1:  [0, 5, 'H', 'GROSSO'],
+    2:  [3, 1, 'V', 'CANNAVARO'],
+    3:  [1, 12, 'H', 'LIPPI'],
+    4:  [0, 3, 'V', 'CALCIO'],
+    5:  [3, 7, 'H', 'BERLINO'],
+    6:  [10, 4, 'V', 'ZIDANE'],
+    7:  [4, 1, 'H', 'ADIDAS'],
+    8:  [0, 5, 'V', 'GERMANIA'],
+    9:  [7, 0, 'H', 'MATERAZZI'],
+    10: [9, 6, 'V', 'PODOLSKI'],
+    11: [8, 10, 'H', 'FRANCIA'],
+    12: [2, 8, 'V', 'DEL PIERO'],
+    13: [9, 6, 'H', 'PIRLO'],
+    14: [5, 10, 'V', 'BUFFON'],
+    15: [11, 0, 'H', 'TOTTI'],
+    16: [6, 12, 'V', 'ITALIA'],
+    17: [14, 4, 'H', 'NESTA'],
+    18: [0, 13, 'V', 'RIGORI'],
+    19: [15, 0, 'H', 'KLOSE'],
+    20: [7, 16, 'V', 'BARTHEZ']
+  };
+
+  const grid = Array.from({length: size}, () => Array(size).fill(null));
+  const numbers = {};
+
+  for (const [num, [r, c, d, word]] of Object.entries(words)) {
+    numbers[`${r}-${c}`] = num;
+    for(let i=0; i < word.length; i++) {
+      const rr = d==='H' ? r : r+i;
+      const cc = d==='H' ? c+i : c;
+      grid[rr][cc] = word[i];
+    }
+  }
+
+  for(let r=0; r<size; r++) {
+    for(let c=0; c<size; c++) {
+      if(grid[r][c] === null) grid[r][c] = 'black';
+    }
+  }
+
+  const container = document.getElementById('grid');
+  for(let r=0; r<size; r++) {
+    for(let c=0; c<size; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+
+      if(grid[r][c] === 'black') {
+        cell.classList.add('black');
+      } else {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.maxLength = 1;
+        input.dataset.row = r;
+        input.dataset.col = c;
+        input.autocomplete = 'off';
+        cell.appendChild(input);
+
+        if(numbers[`${r}-${c}`]) {
+          const numLabel = document.createElement('div');
+          numLabel.className = 'number';
+          numLabel.textContent = numbers[`${r}-${c}`];
+          cell.appendChild(numLabel);
+        }
+      }
+      container.appendChild(cell);
+    }
+  }
+
+  document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('keydown', e => {
+      const r = parseInt(e.target.dataset.row);
+      const c = parseInt(e.target.dataset.col);
+
+      if(e.key.length === 1 && e.key.match(/[a-zA-Z]/)) {
+        e.preventDefault();
+        e.target.value = e.key.toUpperCase();
+      } else if(e.key === "Backspace") {
+        e.preventDefault();
+        e.target.value = '';
+      } else if(e.key === "ArrowRight") {
+        e.preventDefault();
+        let nc = c + 1;
+        while(nc < size) {
+          const next = document.querySelector(`input[data-row='${r}'][data-col='${nc}']`);
+          if(next) { next.focus(); return; }
+          nc++;
+        }
+      } else if(e.key === "ArrowLeft") {
+        e.preventDefault();
+        let nc = c - 1;
+        while(nc >= 0) {
+          const prev = document.querySelector(`input[data-row='${r}'][data-col='${nc}']`);
+          if(prev) { prev.focus(); return; }
+          nc--;
+        }
+      } else if(e.key === "ArrowDown") {
+        e.preventDefault();
+        let nr = r + 1;
+        while(nr < size) {
+          const next = document.querySelector(`input[data-row='${nr}'][data-col='${c}']`);
+          if(next) { next.focus(); return; }
+          nr++;
+        }
+      } else if(e.key === "ArrowUp") {
+        e.preventDefault();
+        let nr = r - 1;
+        while(nr >= 0) {
+          const prev = document.querySelector(`input[data-row='${nr}'][data-col='${c}']`);
+          if(prev) { prev.focus(); return; }
+          nr--;
+        }
+      }
+    });
+  });
+
+  function checkAnswers(){
+    document.querySelectorAll('input').forEach(input => {
+      const r = input.dataset.row;
+      const c = input.dataset.col;
+      const val = input.value.toUpperCase();
+      if(val === grid[r][c]) {
+        input.style.backgroundColor = '#b6f2b6';
+      } else if(val === '') {
+        input.style.backgroundColor = 'white';
+      } else {
+        input.style.backgroundColor = '#f2b6b6';
+      }
+    });
+  }
+
+  function revealAnswers(){
+    document.querySelectorAll('input').forEach(input => {
+      const r = input.dataset.row;
+      const c = input.dataset.col;
+      input.value = grid[r][c];
+      input.style.backgroundColor = '#b6f2b6';
+    });
+  }
+
+  function resetGrid(){
+    document.querySelectorAll('input').forEach(input => {
+      input.value = '';
+      input.style.backgroundColor = 'white';
+    });
+  }
+</script>
+</body>
+</html>

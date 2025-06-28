@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>Geografia</title>
+  <style>
+    body {
+      background: url('stadio4.png') no-repeat center center fixed;
+      background-size: cover;
+      font-family: Arial, sans-serif;
+      color: #fff;
+      margin: 0; padding: 20px;
+    }
+    .container {
+      max-width: 1100px;
+      background: rgba(0,0,0,0.85);
+      margin: auto;
+      border-radius: 10px;
+      padding: 25px;
+    }
+    h1 {
+      text-align: center;
+      color: #D2B48C;
+      margin-bottom: 15px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(17, 32px);
+      grid-template-rows: repeat(17, 32px);
+      gap: 2px;
+      justify-content: center;
+      margin: 20px 0;
+      user-select: none;
+    }
+    .cell {
+      position: relative;
+      width: 32px;
+      height: 32px;
+      background: white;
+      border: 1px solid #999;
+      box-sizing: border-box;
+    }
+    .cell.black {
+      background: black;
+      border: none;
+    }
+    .cell input {
+      width: 100%;
+      height: 100%;
+      border: none;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+      background: transparent;
+      color: black;
+      caret-color: black;
+      padding: 0;
+      margin: 0;
+    }
+    .cell input:focus {
+      outline: 2px solid #00ccff;
+      background: #e0f7ff;
+    }
+    .number {
+      position: absolute;
+      top: 1px;
+      left: 2px;
+      font-size: 10px;
+      font-weight: bold;
+      color: black;
+      user-select: none;
+    }
+    .clues {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: nowrap;
+      margin-top: 25px;
+      gap: 20px;
+    }
+    .clues > div {
+      flex: 1;
+      background: #222;
+      padding: 15px;
+      border-radius: 8px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .clues h2 {
+      color: #D2B48C;
+      margin-top: 0;
+    }
+    ol {
+     list-style: none;
+      padding-left: 0;
+      margin-left: 0;
+     }
+
+    ol li {
+      margin-bottom: 8px;
+      line-height: 1.3;
+      list-style: none; /* Rimuove numerazione */
+      cursor: default;
+    }
+    .button-bar {
+      text-align: center;
+      margin-top: 25px;
+    }
+    button {
+      cursor: pointer;
+      background: #00ccff;
+      border: none;
+      color: black;
+      font-weight: bold;
+      padding: 10px 20px;
+      margin: 0 12px;
+      border-radius: 6px;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #0099cc;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Geografia</h1>
+    <div class="grid" id="grid"></div>
+
+<div class="clues">
+  <div>
+    <h2>Orizzontali</h2>
+    <ol>
+      <li><b>1.</b> Regione arida con scarse precipitazioni</li>
+      <li><b>3.</b> Vento stagionale tipico dell’Asia</li>
+      <li><b>5.</b> Continente attraversato dall’equatore e dal Nilo</li>
+      <li><b>7.</b> Catena montuosa del Sud America</li>
+      <li><b>9.</b> Catena montuosa dell’Asia meridionale</li>
+      <li><b>11.</b> Fiume sacro dell’India</li>
+      <li><b>13.</b> Terra di geyser e vulcani nel nord Europa</li>
+      <li><b>15.</b> Continente-isola dell’emisfero sud</li>
+      <li><b>17.</b> Oceano tra Europa-Americhe</li>
+      <li><b>19.</b> Fiume più lungo d’Africa</li>
+    </ol>
+  </div>
+  <div>
+    <h2>Verticali</h2>
+    <ol>
+      <li><b>2.</b> Foresta pluviale più vasta del pianeta</li>
+      <li><b>4.</b> Regione gelida della Russia</li>
+      <li><b>6.</b> Rilievo da cui fuoriesce magma</li>
+      <li><b>8.</b> Il deserto caldo più grande</li>
+      <li><b>10.</b> Paese a forma di stivale</li>
+      <li><b>12.</b> Continente diviso in Nord, Centro e Sud</li>
+      <li><b>14.</b> Vetta più alta del mondo</li>
+      <li><b>16.</b> Arcipelago asiatico colpito da frequenti terremoti</li>
+      <li><b>18.</b> Mare tra Europa, Africa e Asia</li>
+      <li><b>20.</b> Secondo paese più esteso al mondo</li>
+    </ol>
+  </div>
+</div>
+
+
+    <div class="button-bar">
+      <button onclick="checkAnswers()">Verifica Risposte</button>
+      <button onclick="revealAnswers()">Mostra Soluzioni</button>
+      <button onclick="resetGrid()">Azzera</button>
+    </div>
+  </div>
+
+<script>
+  const size = 17;
+  const words = {
+    1:  [0, 10, 'H', 'DESERTO'],
+    2:  [6, 2, 'V', 'AMAZZONIA'],
+    3:  [2, 1, 'H', 'MONSONE'],
+    4:  [4, 5, 'V', 'SIBERIA'],
+    5:  [3, 11, 'H', 'AFRICA'],
+    6:  [5, 7, 'V', 'VULCANO'],
+    7:  [4, 1, 'H', 'ANDES'],
+    8:  [4, 9, 'V', 'SAHARA'],
+    9:  [9, 4, 'H', 'HIMALAIA'],
+    10: [9, 10, 'V', 'ITALIA'],
+    11: [12, 0, 'H', 'GANGE'],
+    12: [3, 11, 'V', 'AMERICA'],
+    13: [13, 10, 'H', 'ISLANDA'],
+    14: [0, 13, 'V', 'EVEREST'],
+    15: [14, 2, 'H', 'AUSTRALIA'],
+    16: [7, 14, 'V', 'GIAPPONE'],
+    17: [16, 8, 'H', 'ATLANTICO'],
+    18: [5, 16, 'V', 'MEDITERRANEO'],
+    19: [16, 0, 'H', 'NILO'],
+    20: [0, 3, 'V', 'CANADA']
+  };
+
+  const grid = Array.from({length: size}, () => Array(size).fill(null));
+  const numbers = {};
+
+  for (const [num, [r, c, d, word]] of Object.entries(words)) {
+    numbers[`${r}-${c}`] = num;
+    for(let i=0; i < word.length; i++) {
+      const rr = d==='H' ? r : r+i;
+      const cc = d==='H' ? c+i : c;
+      grid[rr][cc] = word[i];
+    }
+  }
+
+  for(let r=0; r<size; r++) {
+    for(let c=0; c<size; c++) {
+      if(grid[r][c] === null) grid[r][c] = 'black';
+    }
+  }
+
+  const container = document.getElementById('grid');
+  for(let r=0; r<size; r++) {
+    for(let c=0; c<size; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+
+      if(grid[r][c] === 'black') {
+        cell.classList.add('black');
+      } else {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.maxLength = 1;
+        input.dataset.row = r;
+        input.dataset.col = c;
+        input.autocomplete = 'off';
+        cell.appendChild(input);
+
+        if(numbers[`${r}-${c}`]) {
+          const numLabel = document.createElement('div');
+          numLabel.className = 'number';
+          numLabel.textContent = numbers[`${r}-${c}`];
+          cell.appendChild(numLabel);
+        }
+      }
+      container.appendChild(cell);
+    }
+  }
+
+  document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('keydown', e => {
+      const r = parseInt(e.target.dataset.row);
+      const c = parseInt(e.target.dataset.col);
+
+      if(e.key.length === 1 && e.key.match(/[a-zA-Z]/)) {
+        e.preventDefault();
+        e.target.value = e.key.toUpperCase();
+      } else if(e.key === "Backspace") {
+        e.preventDefault();
+        e.target.value = '';
+      } else if(e.key === "ArrowRight") {
+        e.preventDefault();
+        let nc = c + 1;
+        while(nc < size) {
+          const next = document.querySelector(`input[data-row='${r}'][data-col='${nc}']`);
+          if(next) { next.focus(); return; }
+          nc++;
+        }
+      } else if(e.key === "ArrowLeft") {
+        e.preventDefault();
+        let nc = c - 1;
+        while(nc >= 0) {
+          const prev = document.querySelector(`input[data-row='${r}'][data-col='${nc}']`);
+          if(prev) { prev.focus(); return; }
+          nc--;
+        }
+      } else if(e.key === "ArrowDown") {
+        e.preventDefault();
+        let nr = r + 1;
+        while(nr < size) {
+          const next = document.querySelector(`input[data-row='${nr}'][data-col='${c}']`);
+          if(next) { next.focus(); return; }
+          nr++;
+        }
+      } else if(e.key === "ArrowUp") {
+        e.preventDefault();
+        let nr = r - 1;
+        while(nr >= 0) {
+          const prev = document.querySelector(`input[data-row='${nr}'][data-col='${c}']`);
+          if(prev) { prev.focus(); return; }
+          nr--;
+        }
+      }
+    });
+  });
+
+  function checkAnswers(){
+    document.querySelectorAll('input').forEach(input => {
+      const r = input.dataset.row;
+      const c = input.dataset.col;
+      const val = input.value.toUpperCase();
+      if(val === grid[r][c]) {
+        input.style.backgroundColor = '#b6f2b6';
+      } else if(val === '') {
+        input.style.backgroundColor = 'white';
+      } else {
+        input.style.backgroundColor = '#f2b6b6';
+      }
+    });
+  }
+
+  function revealAnswers(){
+    document.querySelectorAll('input').forEach(input => {
+      const r = input.dataset.row;
+      const c = input.dataset.col;
+      input.value = grid[r][c];
+      input.style.backgroundColor = '#b6f2b6';
+    });
+  }
+
+  function resetGrid(){
+    document.querySelectorAll('input').forEach(input => {
+      input.value = '';
+      input.style.backgroundColor = 'white';
+    });
+  }
+</script>
+</body>
+</html>
